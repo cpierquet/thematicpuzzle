@@ -2,13 +2,15 @@
 % licence    : Released under the LaTeX Project Public License v1.3c or later, see http://www.latex-project.org/lppl.txtf
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{thematicpuzzle}[2023/12/17 0.1.0 Present 'puzzle' with different thematics, in TikZ]
+\ProvidesPackage{thematicpuzzle}[2024/01/09 0.1.1 Present 'puzzle' with different thematics, in TikZ]
+% 0.1.1	Enhancments for colors
 % 0.1.0	Initial version
 
 %====PACKAGES
 \RequirePackage{tikz}
 \RequirePackage{simplekv}
 \RequirePackage{xstring}
+\RequirePackage{xintexpr}
 \RequirePackage{listofitems}
 \RequirePackage{fontawesome5}
 
@@ -69,11 +71,27 @@
 	\readlist*\PuzzleListeAlea{\puzztmpalea}%
 	\IfSubStr{\puzzthmbg}{,}%
 		{%
-			\readlist*\PuzzleListeCouleurs{\puzzthmbg}%
+			\StrCount{\puzzthmbg}{,}[\puzznbvirg]%
+			\xintifboolexpr{\puzznbvirg < \PuzzleListeThemeslen}%
+				{%
+					\xdef\nbrepet{\fpeval{round(\PuzzleListeThemeslen/(\puzznbvirg+1),0,1)}}%
+					\xdef\puzzlstcol{\puzzthmbg}%
+					\foreach \i in {2,...,\nbrepet}{%
+						\xdef\puzzlstcol{\puzzlstcol,\puzzthmbg}%
+					}%
+				}%
+				{%
+					\xdef\puzzlstcol{\puzzthmbg}%
+				}%
 		}%
 		{%
-			\xdef\puzzthmbgcol{\puzzthmbg}%
+			\xdef\puzzlstcol{\puzzthmbg}%
+			\foreach \i in {2,...,\PuzzleListeThemeslen}{%
+				\xdef\puzzlstcol{\puzzlstcol,\puzzthmbg}%
+			}%
 		}%
+	\readlist*\PuzzleListeCouleurs{\puzzlstcol}%
+	%environnement tikz
 	\begin{tikzpicture}[scale=\puzzthmscale,transform shape,#2]%
 		%styles
 		\tikzset{bordure/.style={\puzzthmbc,line width={0.5*\puzzthmscale*\puzzthmthick}}}%
@@ -82,11 +100,7 @@
 			{\tikzset{fond/.style={}}}%
 			{\tikzset{fond/.style={fill=\puzzthmbgcol}}}%
 		%1ère pièce
-		\IfSubStr{\puzzthmbg}{,}%
-			{%
-				\itemtomacro\PuzzleListeCouleurs[1]{\puzzthmbgcol}%
-			}%
-			{}%
+		\itemtomacro\PuzzleListeCouleurs[1]{\puzzthmbgcol}%
 		\itemtomacro\PuzzleListeAlea[1]{\tmprand}%
 		\draw[bordure,fond] (\tmprounded,0) -- (1,0) .. controls (1+\tmprand*0.66*0.00,0.0) and (1+\tmprand*0.66*-0.04,0.4) ..
 		(1+\tmprand*0.66*0.04,0.4) .. controls (1+\tmprand*0.66*0.11,0.4) and (1+\tmprand*0.66*0.26,0.2) .. 
@@ -98,11 +112,7 @@
 			\xdef\ipu{\inteval{\i+1}}%
 			\itemtomacro\PuzzleListeAlea[\i]{\tmprandg}%
 			\itemtomacro\PuzzleListeAlea[\ipu]{\tmprandd}%
-			\IfSubStr{\puzzthmbg}{,}%
-				{%
-					\itemtomacro\PuzzleListeCouleurs[\ipu]{\puzzthmbgcol}%
-				}%
-				{}%
+			\itemtomacro\PuzzleListeCouleurs[\ipu]{\puzzthmbgcol}%
 			\draw[bordure,fond] (\i,0) .. controls (\i+\tmprandg*0.66*0.00,0.0) and (\i+\tmprandg*0.66*-0.04,0.4) ..
 			(\i+\tmprandg*0.66*0.04,0.4) .. controls (\i+\tmprandg*0.66*0.11,0.4) and (\i+\tmprandg*0.66*0.26,0.2) .. 
 			(\i+\tmprandg*0.66*0.26,0.5) .. controls (\i+\tmprandg*0.66*0.26,0.8) and (\i+\tmprandg*0.66*0.11,0.6) .. 
@@ -115,11 +125,7 @@
 			(\ipu+\tmprandd*0.66*0.00,0.0) -- (\ipu,0) -- (\i,0);
 		}%
 		%dernière pièce
-		\IfSubStr{\puzzthmbg}{,}%
-			{%
-				\itemtomacro\PuzzleListeCouleurs[-1]{\puzzthmbgcol}%
-			}%
-			{}%
+		\itemtomacro\PuzzleListeCouleurs[\PuzzleListeThemeslen]{\puzzthmbgcol}%
 		\itemtomacro\PuzzleListeAlea[-1]{\tmprand}%
 		\draw[bordure,fond] (\puzzthmnb-1,0) .. controls (\puzzthmnb-1+\tmprand*0.66*0.00,0.0) and (\puzzthmnb-1+\tmprand*0.66*-0.04,0.4) ..
 		(\puzzthmnb-1+\tmprand*0.66*0.04,0.4) .. controls (\puzzthmnb-1+\tmprand*0.66*0.11,0.4) and (\puzzthmnb-1+\tmprand*0.66*0.26,0.2) .. 
@@ -177,11 +183,27 @@
 	\readlist*\PuzzleListeAlea{\puzztmpalea}%
 	\IfSubStr{\puzzthmbg}{,}%
 		{%
-			\readlist*\PuzzleListeCouleurs{\puzzthmbg}%
+			\StrCount{\puzzthmbg}{,}[\puzznbvirg]%
+			\xintifboolexpr{\puzznbvirg < \PuzzleListeThemeslen}%
+				{%
+					\xdef\nbrepet{\fpeval{round(\PuzzleListeThemeslen/(\puzznbvirg+1),0,1)}}%
+					\xdef\puzzlstcol{\puzzthmbg}%
+					\foreach \i in {2,...,\nbrepet}{%
+						\xdef\puzzlstcol{\puzzlstcol,\puzzthmbg}%
+					}%
+				}%
+				{%
+					\xdef\puzzlstcol{\puzzthmbg}%
+				}%
 		}%
 		{%
-			\xdef\puzzthmbgcol{\puzzthmbg}%
+			\xdef\puzzlstcol{\puzzthmbg}%
+			\foreach \i in {2,...,\PuzzleListeThemeslen}{%
+				\xdef\puzzlstcol{\puzzlstcol,\puzzthmbg}%
+			}%
 		}%
+	\readlist*\PuzzleListeCouleurs{\puzzlstcol}%
+	%environnement tikz
 	\begin{tikzpicture}[scale=\puzzthmscale,transform shape,#2]%
 		%styles
 		\tikzset{border/.style={\puzzthmbc,line width={0.5*\puzzthmscale*\puzzthmthick}}}%
@@ -190,11 +212,7 @@
 			{\tikzset{background/.style={}}}%
 			{\tikzset{background/.style={fill=\puzzthmbgcol}}}%
 		%1ère pièce
-		\IfSubStr{\puzzthmbg}{,}%
-			{%
-				\itemtomacro\PuzzleListeCouleurs[1]{\puzzthmbgcol}%
-			}%
-			{}%
+		\itemtomacro\PuzzleListeCouleurs[1]{\puzzthmbgcol}%
 		\itemtomacro\PuzzleListeAlea[1]{\tmprand}%
 		\draw[border,background] (\tmprounded,0) -- (1,0) .. controls (1+\tmprand*0.66*0.00,0.0) and (1+\tmprand*0.66*-0.04,0.4) ..
 		(1+\tmprand*0.66*0.04,0.4) .. controls (1+\tmprand*0.66*0.11,0.4) and (1+\tmprand*0.66*0.26,0.2) .. 
@@ -206,11 +224,7 @@
 			\xdef\ipu{\inteval{\i+1}}%
 			\itemtomacro\PuzzleListeAlea[\i]{\tmprandg}%
 			\itemtomacro\PuzzleListeAlea[\ipu]{\tmprandd}%
-			\IfSubStr{\puzzthmbg}{,}%
-				{%
-					\itemtomacro\PuzzleListeCouleurs[\ipu]{\puzzthmbgcol}%
-				}%
-				{}%
+			\itemtomacro\PuzzleListeCouleurs[\ipu]{\puzzthmbgcol}%
 			\draw[border,background] (\i,0) .. controls (\i+\tmprandg*0.66*0.00,0.0) and (\i+\tmprandg*0.66*-0.04,0.4) ..
 			(\i+\tmprandg*0.66*0.04,0.4) .. controls (\i+\tmprandg*0.66*0.11,0.4) and (\i+\tmprandg*0.66*0.26,0.2) .. 
 			(\i+\tmprandg*0.66*0.26,0.5) .. controls (\i+\tmprandg*0.66*0.26,0.8) and (\i+\tmprandg*0.66*0.11,0.6) .. 
@@ -223,11 +237,7 @@
 			(\ipu+\tmprandd*0.66*0.00,0.0) -- (\ipu,0) -- (\i,0);
 		}%
 		%dernière pièce
-		\IfSubStr{\puzzthmbg}{,}%
-			{%
-				\itemtomacro\PuzzleListeCouleurs[-1]{\puzzthmbgcol}%
-			}%
-			{}%
+		\itemtomacro\PuzzleListeCouleurs[\PuzzleListeThemeslen]{\puzzthmbgcol}%
 		\itemtomacro\PuzzleListeAlea[-1]{\tmprand}%
 		\draw[border,background] (\puzzthmnb-1,0) .. controls (\puzzthmnb-1+\tmprand*0.66*0.00,0.0) and (\puzzthmnb-1+\tmprand*0.66*-0.04,0.4) ..
 		(\puzzthmnb-1+\tmprand*0.66*0.04,0.4) .. controls (\puzzthmnb-1+\tmprand*0.66*0.11,0.4) and (\puzzthmnb-1+\tmprand*0.66*0.26,0.2) .. 

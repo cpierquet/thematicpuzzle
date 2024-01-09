@@ -25,8 +25,8 @@
 \hypersetup{pdfborder=0 0 0}
 \usepackage[margin=2cm]{geometry}
 \setlength{\parindent}{0pt}
-\def\TPversion{0.1.0}
-\def\TPdate{17/12/2023}
+\def\TPversion{0.1.1}
+\def\TPdate{09/01/2024}
 \usepackage{soul}
 \usepackage{codehigh}
 \usepackage{tabularray}
@@ -72,14 +72,16 @@
 \vfill
 
 \begin{tcolorbox}[colframe=lightgray,colback=lightgray!5,halign=center]
-\ThematicPuzzle{A,B,C,D,E,F,G,H}
+\ThematicPuzzle[BgColors={yellow!50,purple!50}]{A,B,C,D,E,F,G,H}
 \end{tcolorbox}
 
 \begin{tcolorbox}[colframe=lightgray,colback=lightgray!5,halign=center]
 \ThematicPuzzle[Thickness=1.25pt,Scale=2.75,BgColors={yellow!10,orange!10,green!10,teal!10,purple!10},Labels={Angry,Python,Cool,Apple,Battery},BorderColor=darkgray,IconsColor=teal!50!black]{\faAngry,\faPython,\faAngellist,\faApple*,\faBatteryHalf}
 \end{tcolorbox}
 
-\vfill~
+\vfill
+
+\hfill{\footnotesize\itshape Tks to quark67 for his feedbacks.}
 
 \pagebreak
 
@@ -132,9 +134,8 @@ To load the package, simply add in the preamble :
 The useful and loaded packages are:
 
 \begin{itemize}
-	\item \MontreCode{tikz};
-	\item \MontreCode{fontawesome5};
-	\item \MontreCode{simplekv}, \MontreCode{listofitems} and \MontreCode{xstring}.
+	\item \MontreCode{tikz}, \MontreCode{fontawesome5} et \MontreCode{xintexpr} ;
+	\item \MontreCode{simplekv}, \MontreCode{listofitems} et \MontreCode{xstring}.
 \end{itemize}
 
 \vfill
@@ -143,7 +144,8 @@ The useful and loaded packages are:
 
 \begin{quote}
 \begin{verbatim}
-0.1.0: Initial release
+0.1.1 : Enhancements for colors
+0.1.0 : Initial release
 \end{verbatim}
 \end{quote}
 
@@ -151,7 +153,7 @@ The useful and loaded packages are:
 
 \section{The macro}
 
-\subsection{General usage, keyx and options}
+\subsection{General usage, keys and options}
 
 In order to create a \textit{theme puzzle}, the command is:
 
@@ -167,9 +169,9 @@ The \textsf{keys}, optional and between \MontreCode{[...]}, are:
 \begin{itemize}
 	\item \MontreCode{Thickness} := thickness of the lines (\MontreCode{1pt} by default);
 	\item \MontreCode{Scale} := global scale of the figure (\MontreCode{1} by default);
-	\item \MontreCode{BgColors} := background color (\MontreCode{empty} by default);
-	\item \MontreCode{BorderColor} := color(s) (if necessary separated by \MontreCode{,}) of the borders (\MontreCode{black} by default);
-	\item \MontreCode{Labels} := (optional) labels of the themes (\MontreCode{empty} by default);
+	\item \MontreCode{BgColors} := background color(s) (see paragraph on colors);
+	\item \MontreCode{BorderColor} := color(s) of the borders (\MontreCode{black} by default);
+	\item \MontreCode{Labels} := (optional) labels of the themes (\MontreCode{\{\}} by default);
 	\item \MontreCode{ScaleLabels} := label scale (\MontreCode{1.15} by default);
 	\item \MontreCode{FontLabels} := label font (\MontreCode{\textbackslash tiny\textbackslash sffamily} by default);
 	\item \MontreCode{IconsColor} := color of icons and labels (\MontreCode{black} by default).
@@ -183,6 +185,24 @@ The optional argument, between \MontreCode{<...>}, corresponds to specific optio
 
 The obligatory argument, between \MontreCode{\{...\}}, corresponds to the list of decorations (in the form of \textit{characters}) of the different puzzle pieces, within form \MontreCode{\{deco<1>,deco<2>,...,deco<n>\}}
 
+\subsection{The colors of the boxes}
+
+Concerning the color of the boxes, it's the key \MontreCode{BgColors} which is in charge.
+
+It can work in several ways:
+
+\begin{itemize}
+	\item by default it is empty, which does not color the boxes ;
+	\item it can be given in a single form, via \MontreCode{BgColors=mycolor}, in which case all the boxes are of the same color;
+	\item we can give it in the form of a list \MontreCode{BgColors=\{mycolorA,mycolorB,...\}} and:
+	\begin{itemize}
+		\item in the case where the number of colors is sufficient, they are used one after the other;
+		\item otherwise, the code takes care of \textit{repeating} the pattern of the proposed colors.
+	\end{itemize}
+\end{itemize}
+
+\pagebreak
+
 \subsection{Examples}
 
 \begin{tcblisting}{colframe=lightgray,colback=lightgray!5}
@@ -190,7 +210,7 @@ The obligatory argument, between \MontreCode{\{...\}}, corresponds to the list o
 \end{tcblisting}
 
 \begin{tcblisting}{colframe=lightgray,colback=lightgray!5}
-\ThematicPuzzle[Labels={Maths,History,Geo,Chemistry}]%
+\ThematicPuzzle[Labels={Maths,History,Geo,Chemistry},BgColors={yellow!25,red!25}]%
   {\faAngry,\faArchway,\faAtlas,\faAtom}
 \end{tcblisting}
 
